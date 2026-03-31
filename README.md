@@ -17,7 +17,7 @@ symlinked via GNU Stow — with SSH authentication handled by **1Password**.
 | CLI | ripgrep, fd, fzf, bat, eza, htop, tmux |
 | Dev toolchains | pyenv (Python), fnm (Node), rustup (Rust), go |
 | AUR | paru, 1password-cli, wslu, npiperelay |
-| Fonts | FiraCode Nerd Font, Noto Fonts (for WSLg) |
+| Fonts | JetBrains Mono Nerd Font, Noto Fonts (for WSLg) |
 
 ---
 

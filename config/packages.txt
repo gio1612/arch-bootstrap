@@ -33,4 +33,4 @@ go
 
 # ── Fonts (for WSLg GUI apps) ─────────────────────────────────────────────────
 noto-fonts
-ttf-firacode-nerd
+ttf-jetbrains-mono-nerd
