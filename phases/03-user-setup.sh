@@ -13,6 +13,12 @@ else
   log_info "Created user '${BOOTSTRAP_USER}' with wheel group."
 fi
 
+# Ensure home dir exists and is owned by the user (guards against re-runs
+# where a previous root process may have created files under the home dir)
+USER_HOME="/home/${BOOTSTRAP_USER}"
+mkdir -p "${USER_HOME}"
+chown "${BOOTSTRAP_USER}:${BOOTSTRAP_USER}" "${USER_HOME}"
+
 # Ensure user is in wheel group
 if ! groups "${BOOTSTRAP_USER}" | grep -q "\bwheel\b"; then
   usermod -aG wheel "${BOOTSTRAP_USER}"
