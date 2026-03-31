@@ -1,0 +1,9 @@
+# AUR packages — installed via paru after phase 06
+# ── 1Password CLI ─────────────────────────────────────────────────────────────
+1password-cli
+
+# ── WSL utilities (wslview, wslpath helpers, etc.) ────────────────────────────
+wslu
+
+# ── npiperelay (bridges Windows 1Password SSH agent into WSL2) ───────────────
+npiperelay
