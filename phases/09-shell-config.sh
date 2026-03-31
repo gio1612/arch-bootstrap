@@ -18,7 +18,7 @@ CURRENT_SHELL=$(getent passwd "${BOOTSTRAP_USER}" | cut -d: -f7)
 if [[ "$CURRENT_SHELL" == "$ZSH_BIN" ]]; then
   log_info "Default shell is already zsh."
 else
-  chsh -s "$ZSH_BIN" "${BOOTSTRAP_USER}"
+  usermod -s "$ZSH_BIN" "${BOOTSTRAP_USER}"
   log_info "Default shell set to zsh for '${BOOTSTRAP_USER}'."
 fi
 
