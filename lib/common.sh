@@ -41,7 +41,7 @@ mark_done() {
 # ── Run command as target user ────────────────────────────────────────────────
 # Usage: run_as_user "command here"
 run_as_user() {
-  sudo -u "${BOOTSTRAP_USER}" bash -c "$1"
+  sudo -H -u "${BOOTSTRAP_USER}" bash -c "$1"
 }
 
 # ── Backup a file before overwriting ──────────────────────────────────────────

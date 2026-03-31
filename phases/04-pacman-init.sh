@@ -16,3 +16,9 @@ pacman-key --populate archlinux
 # ── Full system upgrade ───────────────────────────────────────────────────────
 log_info "Running full system upgrade (pacman -Syyu)..."
 pacman -Syyu --noconfirm
+
+# ── Ensure sudo is present (not included in Arch base tarball) ────────────────
+if ! command -v sudo &>/dev/null; then
+  log_info "Installing sudo (not present in Arch base tarball)..."
+  pacman -S --needed --noconfirm sudo
+fi
