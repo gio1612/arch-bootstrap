@@ -27,7 +27,7 @@ if [[ -d "$ZINIT_DIR" ]]; then
   log_info "zinit already installed."
 else
   log_info "Installing zinit..."
-  run_as_user "mkdir -p $(dirname ${ZINIT_DIR})"
-  run_as_user "git clone https://github.com/zdharma-continuum/zinit.git ${ZINIT_DIR}"
+  run_as_user "mkdir -p '$(dirname "${ZINIT_DIR}")'"
+  run_as_user "git clone https://github.com/zdharma-continuum/zinit.git '${ZINIT_DIR}'"
   log_info "zinit installed to ${ZINIT_DIR}"
 fi

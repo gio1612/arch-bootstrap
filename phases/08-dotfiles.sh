@@ -75,16 +75,22 @@ if [[ -d "$DOTFILES_DIR" ]]; then
   fi
 else
   log_info "Cloning dotfiles..."
+  CLONE_OK=false
   if [[ -f "$KEY_FILE" ]]; then
     run_as_user "GIT_SSH_COMMAND='ssh -i ${KEY_FILE} -o StrictHostKeyChecking=no' \
-      git clone ${DOTFILES_REPO} ${DOTFILES_DIR}"
+      git clone ${DOTFILES_REPO} ${DOTFILES_DIR}" && CLONE_OK=true
   else
-    run_as_user "git clone ${DOTFILES_REPO} ${DOTFILES_DIR}"
+    run_as_user "git clone ${DOTFILES_REPO} ${DOTFILES_DIR}" && CLONE_OK=true
+  fi
+
+  if ! $CLONE_OK; then
+    log_error "git clone failed — dotfiles not cloned. SSH key preserved for retry."
+    exit 1
   fi
   log_info "Dotfiles cloned to ${DOTFILES_DIR}"
 fi
 
-# ── Shred temporary key (1Password SSH agent takes over after reboot) ─────────
+# ── Shred temporary key only after confirmed successful clone ─────────────────
 if [[ -f "$KEY_FILE" ]] && command -v op &>/dev/null; then
   shred -u "$KEY_FILE"
   log_info "Temporary SSH key removed. 1Password SSH agent will handle future auth."
@@ -112,19 +118,20 @@ for pkg in $STOW_PACKAGES; do
   if [[ -n "$CONFLICTS" ]]; then
     log_warn "Conflicts for ${pkg}:"
     echo "$CONFLICTS"
-    # Back up conflicting files
+    # Back up conflicting files before removing them so stow can link cleanly
     mkdir -p "$BACKUP_DIR"
     chown "${BOOTSTRAP_USER}:${BOOTSTRAP_USER}" "$BACKUP_DIR"
     while IFS= read -r conflict_line; do
-      # Extract the conflicting file path
       conflict_file=$(echo "$conflict_line" | grep -oP '(?<=existing target is )\S+' || true)
       if [[ -n "$conflict_file" && -e "${USER_HOME}/${conflict_file}" ]]; then
-        run_as_user "cp -r ${USER_HOME}/${conflict_file} ${BACKUP_DIR}/" || true
+        run_as_user "cp -r '${USER_HOME}/${conflict_file}' '${BACKUP_DIR}/'" || true
+        run_as_user "rm -rf '${USER_HOME}/${conflict_file}'"
       fi
     done <<< "$CONFLICTS"
   fi
 
-  run_as_user "stow -d ${DOTFILES_DIR} -t ~ --no-folding --adopt ${pkg}" || \
+  # --override replaces existing symlinks; conflicts removed above so stow links cleanly
+  run_as_user "stow -d '${DOTFILES_DIR}' -t ~ --no-folding --override='.*' '${pkg}'" || \
     log_warn "stow failed for ${pkg} — skipping."
 done
 

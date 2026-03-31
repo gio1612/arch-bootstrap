@@ -48,7 +48,8 @@ run_as_user() {
 backup_file() {
   local file="$1"
   if [[ -e "$file" ]]; then
-    local backup_dir="${HOME}/.config-backup/$(date +%Y%m%d_%H%M%S)"
+    local target_home="/home/${BOOTSTRAP_USER:-root}"
+    local backup_dir="${target_home}/.config-backup/$(date +%Y%m%d_%H%M%S)"
     mkdir -p "$backup_dir"
     cp -r "$file" "$backup_dir/"
     log_warn "Backed up ${file} → ${backup_dir}/"
