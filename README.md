@@ -48,13 +48,45 @@ In the **1Password desktop app** on Windows:
 
 This exposes your SSH keys to WSL2 without ever writing key files to disk.
 
-### 3. Install npiperelay on Windows
+### 3. Install npiperelay
 
 `npiperelay.exe` bridges the 1Password SSH agent (a Windows named pipe) into WSL2.
+It is a Windows binary, but it must be **accessible from inside WSL** — not the Windows PATH.
 
-Download the latest release from https://github.com/jstarks/npiperelay/releases
-and place `npiperelay.exe` somewhere on your Windows `PATH`
-(e.g. `C:\Windows\System32\` or `C:\Users\<you>\bin\`).
+Install it via WinGet, Scoop, or manually:
+
+```powershell
+# Option A: WinGet
+winget install albertony.npiperelay
+
+# Option B: Scoop
+scoop install npiperelay
+```
+
+Then find where it was installed and note the path under `/mnt/c/...` in WSL:
+
+```bash
+# WinGet example
+ls /mnt/c/Users/<WindowsUser>/AppData/Local/Microsoft/WinGet/Links/npiperelay.exe
+
+# Scoop example
+ls /mnt/c/Users/<WindowsUser>/scoop/shims/npiperelay.exe
+```
+
+The `.zshrc` in your dotfiles is configured to look for `npiperelay.exe` on the WSL `PATH`
+first, then fall back to the hardcoded WinGet path. If your path differs, update the fallback
+line in `~/.dotfiles/zsh/.zshrc`:
+
+```zsh
+_NPIPERELAY=$(command -v npiperelay.exe 2>/dev/null \
+  || echo "/mnt/c/Users/<WindowsUser>/AppData/Local/Microsoft/WinGet/Links/npiperelay.exe")
+```
+
+You can also add the directory directly to your WSL `PATH` in `~/.zshenv`:
+
+```zsh
+export PATH="$PATH:/mnt/c/Users/<WindowsUser>/AppData/Local/Microsoft/WinGet/Links"
+```
 
 ---
 
@@ -139,9 +171,11 @@ ssh -T git@github.com
 ```
 
 If it fails, check that:
-- `npiperelay.exe` is on the Windows `PATH`
-- 1Password SSH agent is enabled and unlocked
-- The `socat` bridge in `.zshrc` started correctly: `ls ~/.ssh/agent.sock`
+- `npiperelay.exe` is reachable from WSL: `ls /mnt/c/Users/<WindowsUser>/.../<npiperelay.exe>`
+- The path in `.zshrc` matches where it's installed (WinGet, Scoop, or manual)
+- 1Password SSH agent is enabled and unlocked (Settings → Developer → Use the SSH agent)
+- The `socat` bridge started correctly: `ls ~/.ssh/agent.sock`
+- Restart the bridge manually if needed: `pkill socat && exec zsh`
 
 ---
 
@@ -167,7 +201,7 @@ Logs are written to `/var/log/arch-bootstrap.log`.
 | File | Purpose |
 |---|---|
 | `config/packages.txt` | pacman packages to install (one per line, `#` comments ok) |
-| `config/aur-packages.txt` | AUR packages installed via paru |
+| `config/aur-packages.txt` | AUR packages installed via yay |
 | `config/wsl.conf.template` | Template for `/etc/wsl.conf` (`{{USER}}` is substituted) |
 
 ---
