@@ -16,7 +16,7 @@ symlinked via GNU Stow — with SSH authentication handled by **1Password**.
 | Editor | Neovim + lazy.nvim (LSP, Treesitter, Telescope) |
 | CLI | ripgrep, fd, fzf, bat, eza, htop, tmux |
 | Dev toolchains | pyenv (Python), fnm (Node), rustup (Rust), go |
-| AUR | paru, 1password-cli, wslu, npiperelay |
+| AUR | yay, 1password-cli, wslu, npiperelay |
 | Fonts | JetBrains Mono Nerd Font, Noto Fonts (for WSLg) |
 
 ---
@@ -181,7 +181,7 @@ Logs are written to `/var/log/arch-bootstrap.log`.
 | 03 | Create user, add to wheel group, configure sudo |
 | 04 | Init pacman keyring, full system upgrade |
 | 05 | Install packages from `config/packages.txt` |
-| 06 | Build and install `paru`, then AUR packages |
+| 06 | Build and install `yay` from source, then AUR packages |
 | 07 | Install pyenv, fnm, rustup; create Go workspace |
 | 08 | Sign in to 1Password, clone dotfiles, stow all packages |
 | 09 | Set default shell to zsh, bootstrap zinit |
